@@ -44,7 +44,7 @@ def main():
       sys.exit(1)
     trained_model_path = sys.argv[2]
     network = sys.argv[3].upper()
-    use_qc =False
+    use_qc = True
    
   #qc
   if use_qc :
@@ -552,14 +552,6 @@ def main():
               best_params = [numpy.copy(p.get_value(borrow=True)) for p in params]
               no_best_dev_update = 0
 
-      '''
-      y_pred_dev = predict_prob_batch(dev_set_iterator)
-      dev_acc = metrics.roc_auc_score(y_dev, y_pred_dev) * 100
-      if dev_acc > best_dev_acc:
-        y_pred = predict_prob_batch(test_set_iterator)
-        test_acc = map_score(qids_test, y_test, y_pred) * 100
-        best_dev_acc = dev_acc
-        best_params = [numpy.copy(p.get_value(borrow=True)) for p in params]'''
       print('epoch: {} batch: {} dev auc: {:.4f}; best test map: {:.4f}; best_dev_acc: {:.4f}'.format(epoch, i, dev_acc, test_acc, best_dev_acc))
       if no_best_dev_update >= 3:
         print "Quitting after of no update of the best score on dev set", no_best_dev_update
@@ -581,7 +573,8 @@ def main():
 
 
   print "Running trec_eval script..."
-  print "QC model used :", model_name
+  if use_qc :
+        print "QC model used :", model_name
   print 'best dev_acc :', best_dev_acc
   N = len(y_pred_test)
 

@@ -25,7 +25,7 @@ def main():
       sys.exit(1)
     words = v.keys()    
     i =0
-    embedding_weights = np.load(path + 'embedding.npy')
+    embedding_weights = np.load('QC_models/' + path + 'embedding.npy')
     found = 0
     for data_dir in data_dirs:
       fname_vocab = os.path.join(data_dir, 'vocab.pickle')
@@ -41,9 +41,9 @@ def main():
           vocab_emb[idx] = embedding_weights[1]
       vocab_emb[a] = embedding_weights[0]                    
       i +=1
-      print 'found :', found
-      outfile = 'QC_models' + path + 'emb_{}.npy'.format(data_dir)
-      print outfile + 'completed'
+      #print 'found :', found
+      outfile = 'QC_models/' + path + 'emb_{}.npy'.format(data_dir)
+      print outfile + ' completed'
       np.save(outfile, vocab_emb)
 
 

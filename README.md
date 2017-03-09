@@ -14,7 +14,7 @@ This code integrates a question classifier system with the convolutional neural 
 - fish
 - numba
 
-The above package if not installed, can be installed using pip command for python : pip install <package-name>
+The above package if not installed, can be installed using pip command for python : `pip install <package-name>`
 
 #Embedding
 The pre-trained embeddings used in the QA system can be downloaded [here](https://drive.google.com/folderview?id=0B-yipfgecoSBfkZlY2FFWEpDR3M4Qkw5U055MWJrenE5MTBFVXlpRnd0QjZaMDQxejh1cWs&usp=sharing)
