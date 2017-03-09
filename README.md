@@ -38,6 +38,7 @@ in the TRAIN-ALL setting using 53,417 qa pairs:
 #Deployment - with Question Classifier
 Download the pre-trained Question Classification models from [here](https://drive.google.com/open?id=0B11zdsTNhzfGcDVXYmkwNXBST28).
 The folder contains the data and the pre-trained question classifier models. It contains four folders namely data, TREC, MS and MT.  
+
 QC_models/data - contains the data used to train question classifier models  
 QC_models/TREC - contains pre-trained model trained on TREC data only  
 QC_models/MS - contains pre-trained model trained on MS data only  
@@ -52,14 +53,14 @@ This wil create appropriate embeddings for each of the previous embddings in the
 To train the model with this question classifier models
 
 ```sh
-python run_nnet.py <train_data> <trained_model_path> <network_the_model_was_trained_on>
+python run_nnet.py <train_data> <trained_QC_model_path> <network_QC__was_trained_on>
 ```
 
 example :
 >$ python run_nnet.py TRAIN QC_models/TREC/LSTM/ LSTM
 
-trained_data : TRAIN or TRAIN-ALL
+train_data : TRAIN or TRAIN-ALL
 
-trained_model_path : the location of the pre-trained model where the embedding is present as well.  
+trained_QC_model_path : the location of the pre-trained model where the embedding is present as well.  
 
-network_the_model_was_trained_on : LSTM or GRU
+network_QC_was_trained_on : LSTM or GRU
