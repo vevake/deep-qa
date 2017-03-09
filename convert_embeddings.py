@@ -17,9 +17,9 @@ def main():
                 'TRAIN-ALL',
                 ]
     if 'TREC' in path:
-      v = json.loads(open('QC_models/data/TREC/vocab_TREC.json').read())
+      v = json.loads(open('QC_models/vocab/vocab_TREC.json').read())
     elif 'MS' in path:
-      v = json.loads(open('QC_models/data/MS/vocab_MS.json').read())
+      v = json.loads(open('QC_models/vocab/vocab_MS.json').read())
     else :
       print 'Error loading vocabulary'
       sys.exit(1)
