@@ -31,13 +31,13 @@ def main():
   # mode = 'TRAIN-ALL'
   mode = 'train'
   use_qc = False
-  if len(sys.argv) == 1:
+  if len(sys.argv) == 2:
     mode = sys.argv[1]
     if not mode in ['TRAIN', 'TRAIN-ALL']:
       print "ERROR! The two possible training settings are: ['TRAIN', 'TRAIN-ALL']"
       sys.exit(1)
     use_qc = False
-  elif len(sys.argv) > 1 :
+  elif len(sys.argv) > 2 :
     mode = sys.argv[1]
     if not mode in ['TRAIN', 'TRAIN-ALL']:
       print "ERROR! The two possible training settings are: ['TRAIN', 'TRAIN-ALL']"
@@ -396,38 +396,68 @@ def main():
   # updates = sgd_trainer.get_adagrad_updates(cost, params, learning_rate=learning_rate, max_norm=max_norm, _eps=1e-6)
   updates = sgd_trainer.get_adadelta_updates(cost, params, rho=0.95, eps=1e-6, max_norm=max_norm, word_vec_name='W_emb')
 
-  inputs_pred = [batch_x_q,
-                 batch_x_qc,
-                 batch_x_a,
-                 batch_x_q_overlap,
-                 batch_x_a_overlap,
-                 # batch_x,
-                 ]
+  if use_qc :
+    inputs_pred = [batch_x_q,
+                  batch_x_qc,
+                  batch_x_a,
+                  batch_x_q_overlap,
+                  batch_x_a_overlap,
+                  # batch_x,
+                  ]
 
-  givens_pred = {x_q: batch_x_q,
-                 x_qc: batch_x_qc,
-                 x_a: batch_x_a,
-                 x_q_overlap: batch_x_q_overlap,
-                 x_a_overlap: batch_x_a_overlap,
-                 # x: batch_x
-                 }
+    givens_pred = {x_q: batch_x_q,
+                  x_qc: batch_x_qc,
+                  x_a: batch_x_a,
+                  x_q_overlap: batch_x_q_overlap,
+                  x_a_overlap: batch_x_a_overlap,
+                  # x: batch_x
+                  }
 
-  inputs_train = [batch_x_q,
-                 batch_x_qc,
-                 batch_x_a,
-                 batch_x_q_overlap,
-                 batch_x_a_overlap,
-                 # batch_x,
-                 batch_y,
-                 ]
+    inputs_train = [batch_x_q,
+                  batch_x_qc,
+                  batch_x_a,
+                  batch_x_q_overlap,
+                  batch_x_a_overlap,
+                  # batch_x,
+                  batch_y,
+                  ]
 
-  givens_train = {x_q: batch_x_q,
-                 x_qc: batch_x_qc,
-                 x_a: batch_x_a,
-                 x_q_overlap: batch_x_q_overlap,
-                 x_a_overlap: batch_x_a_overlap,
-                 # x: batch_x,
-                 y: batch_y}
+    givens_train = {x_q: batch_x_q,
+                  x_qc: batch_x_qc,
+                  x_a: batch_x_a,
+                  x_q_overlap: batch_x_q_overlap,
+                  x_a_overlap: batch_x_a_overlap,
+                  # x: batch_x,
+                  y: batch_y}
+  else :
+    inputs_pred = [batch_x_q,            
+                  batch_x_a,
+                  batch_x_q_overlap,
+                  batch_x_a_overlap,
+                  # batch_x,
+                  ]
+
+    givens_pred = {x_q: batch_x_q,
+                  x_a: batch_x_a,
+                  x_q_overlap: batch_x_q_overlap,
+                  x_a_overlap: batch_x_a_overlap,
+                  # x: batch_x
+                  }
+
+    inputs_train = [batch_x_q,
+                  batch_x_a,
+                  batch_x_q_overlap,
+                  batch_x_a_overlap,
+                  # batch_x,
+                  batch_y,
+                  ]
+
+    givens_train = {x_q: batch_x_q,
+                  x_a: batch_x_a,
+                  x_q_overlap: batch_x_q_overlap,
+                  x_a_overlap: batch_x_a_overlap,
+                  # x: batch_x,
+                  y: batch_y}
 
   train_fn = theano.function(inputs=inputs_train,
                              outputs=cost,
