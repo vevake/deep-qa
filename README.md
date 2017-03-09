@@ -35,6 +35,15 @@ in the TRAIN-ALL setting using 53,417 qa pairs:
 
 >$ python run_nnet.py TRAIN-ALL
 
+The parameters of the trained network are dumped under the 'exp.out' folder.
+TRAIN:
+MAP: 0.7325
+MRR: 0.8018
+
+TRAIN-ALL:
+MAP: 0.7538
+MRR: 0.8078
+
 #Deployment - with Question Classifier
 Download the pre-trained Question Classification models from [here](https://drive.google.com/open?id=0B11zdsTNhzfGcDVXYmkwNXBST28).
 The folder contains the data and the pre-trained question classifier models. It contains four folders namely data, TREC, MS and MT.  
@@ -64,3 +73,15 @@ train_data : TRAIN or TRAIN-ALL
 trained_QC_model_path : the location of the pre-trained model where the embedding is present as well.  
 
 network_QC_was_trained_on : LSTM or GRU
+
+# Best result:
+
+>$ python run_nnet.py TRAIN-ALL QC_models/MT/LSTM/ LSTM
+
+TRAIN:
+MAP: 0.7452
+MRR: 0.8080
+
+TRAIN-ALL:
+MAP: 0.7779
+MRR: 0.8093
