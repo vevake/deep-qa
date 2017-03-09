@@ -1,4 +1,6 @@
 *.pyc
 exp.out
-#TRAIN
-#TRAIN-ALL
+TRAIN
+TRAIN-ALL
+QC_models
+embeddings

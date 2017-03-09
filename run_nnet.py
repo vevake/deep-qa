@@ -26,15 +26,61 @@ warnings.filterwarnings("ignore")  # TODO remove
 def main():
   # ZEROUT_DUMMY_WORD = False
   ZEROUT_DUMMY_WORD = True
-
+  
   ## Load data
   # mode = 'TRAIN-ALL'
   mode = 'train'
-  if len(sys.argv) > 1:
+  use_qc = False
+  if len(sys.argv) == 1:
     mode = sys.argv[1]
     if not mode in ['TRAIN', 'TRAIN-ALL']:
       print "ERROR! The two possible training settings are: ['TRAIN', 'TRAIN-ALL']"
       sys.exit(1)
+    use_qc = False
+  elif len(sys.argv) > 1 :
+    mode = sys.argv[1]
+    if not mode in ['TRAIN', 'TRAIN-ALL']:
+      print "ERROR! The two possible training settings are: ['TRAIN', 'TRAIN-ALL']"
+      sys.exit(1)
+    trained_model_path = sys.argv[2]
+    network = sys.argv[3].upper()
+    use_qc =False
+   
+  #qc
+  if use_qc :
+    import numpy as np
+    np.random.seed(123)
+    from keras.callbacks import Callback
+    from keras.models import Sequential
+    from keras.layers import Dense, Dropout, Activation, Embedding, Convolution1D, MaxPooling1D, Flatten, LSTM, Merge, GRU
+    from keras.callbacks import ModelCheckpoint
+    from keras import backend as K
+    from keras.models import load_model
+  
+    import tensorflow as tf
+    tf.python.control_flow_ops = tf
+
+    embedding_weights = numpy.load(trained_model_path + 'emb_'+ mode +'.npy')
+    vocab_len = embedding_weights.shape[0]
+    model_name = trained_model_path + 'model.hdf5'
+    print 'loaded model : ', model_name
+    model_s = load_model(model_name)
+  
+    #LSTM
+    model = Sequential()
+    model.add(Embedding(output_dim=300, input_dim=vocab_len, weights=[embedding_weights],trainable=False)) 
+    if network == 'LSTM' : 
+      model.add(LSTM(300,return_sequences=False,weights=model_s.layers[1].get_weights(), trainable=False))
+    elif network == 'GRU':
+      model.add(GRU(300,return_sequences=False,weights=model_s.layers[1].get_weights(), trainable=False))
+    else :
+      print "ERROR! Enter the network to use.[LSTM, GRU]"
+      sys.exit(1)
+    model.add(Dropout(0.5))
+    model.add(Dense(6, weights=model_s.layers[3].get_weights(), trainable=False))
+    model.add(Activation('softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
 
   print "Running training in the {} setting".format(mode)
 
@@ -126,6 +172,7 @@ def main():
 
   x = T.dmatrix('x')
   x_q = T.lmatrix('q')
+  x_qc = T.dmatrix('qc')
   x_q_overlap = T.lmatrix('q_overlap')
   x_a = T.lmatrix('a')
   x_a_overlap = T.lmatrix('a_overlap')
@@ -219,7 +266,10 @@ def main():
   #######
   # print 'nnet_q.output', nnet_q.output.ndim
 
-  q_logistic_n_in = nkernels * len(q_filter_widths) * q_k_max
+  if use_qc:
+    q_logistic_n_in = (nkernels * len(q_filter_widths) * q_k_max) + 6
+  else :
+    q_logistic_n_in = nkernels * len(q_filter_widths) * q_k_max
   a_logistic_n_in = nkernels * len(a_filter_widths) * a_k_max
 
   # dropout_q = nn_layers.FastDropoutLayer(rng=numpy_rng)
@@ -265,8 +315,10 @@ def main():
   # pairwise_layer = nn_layers.PairwiseWithFeatsLayer(q_in=q_logistic_n_in,
   # pairwise_layer = nn_layers.PairwiseOnlySimWithFeatsLayer(q_in=q_logistic_n_in,
                                                 a_in=a_logistic_n_in)
-  pairwise_layer.set_input((nnet_q.output, nnet_a.output))
-
+  if use_qc :
+    pairwise_layer.set_input((T.concatenate([nnet_q.output,x_qc],axis=1), nnet_a.output))
+  else :
+    pairwise_layer.set_input((nnet_q.output, nnet_a.output))
   # n_in = q_logistic_n_in + a_logistic_n_in + feats_ndim + a_logistic_n_in
   # n_in = q_logistic_n_in + a_logistic_n_in + feats_ndim + 50
   # n_in = q_logistic_n_in + a_logistic_n_in + feats_ndim + 1
@@ -335,6 +387,7 @@ def main():
 
   # batch_x = T.dmatrix('batch_x')
   batch_x_q = T.lmatrix('batch_x_q')
+  batch_x_qc = T.dmatrix('batch_x_qc')
   batch_x_a = T.lmatrix('batch_x_a')
   batch_x_q_overlap = T.lmatrix('batch_x_q_overlap')
   batch_x_a_overlap = T.lmatrix('batch_x_a_overlap')
@@ -344,6 +397,7 @@ def main():
   updates = sgd_trainer.get_adadelta_updates(cost, params, rho=0.95, eps=1e-6, max_norm=max_norm, word_vec_name='W_emb')
 
   inputs_pred = [batch_x_q,
+                 batch_x_qc,
                  batch_x_a,
                  batch_x_q_overlap,
                  batch_x_a_overlap,
@@ -351,6 +405,7 @@ def main():
                  ]
 
   givens_pred = {x_q: batch_x_q,
+                 x_qc: batch_x_qc,
                  x_a: batch_x_a,
                  x_q_overlap: batch_x_q_overlap,
                  x_a_overlap: batch_x_a_overlap,
@@ -358,6 +413,7 @@ def main():
                  }
 
   inputs_train = [batch_x_q,
+                 batch_x_qc,
                  batch_x_a,
                  batch_x_q_overlap,
                  batch_x_a_overlap,
@@ -366,6 +422,7 @@ def main():
                  ]
 
   givens_train = {x_q: batch_x_q,
+                 x_qc: batch_x_qc,
                  x_a: batch_x_a,
                  x_q_overlap: batch_x_q_overlap,
                  x_a_overlap: batch_x_a_overlap,
@@ -386,11 +443,17 @@ def main():
                             givens=givens_pred)
 
   def predict_batch(batch_iterator):
-    preds = numpy.hstack([pred_fn(batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap) for batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap, _ in batch_iterator])
+    if use_qc :
+      preds = numpy.hstack([pred_fn(batch_x_q, model.predict(batch_x_q), batch_x_a, batch_x_q_overlap, batch_x_a_overlap) for batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap, _ in batch_iterator])
+    else :
+      preds = numpy.hstack([pred_fn(batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap) for batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap, _ in batch_iterator])
     return preds[:batch_iterator.n_samples]
 
   def predict_prob_batch(batch_iterator):
-    preds = numpy.hstack([pred_prob_fn(batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap) for batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap, _ in batch_iterator])
+    if use_qc:
+      preds = numpy.hstack([pred_prob_fn(batch_x_q, model.predict(batch_x_q), batch_x_a, batch_x_q_overlap, batch_x_a_overlap) for batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap, _ in batch_iterator])
+    else:
+      preds = numpy.hstack([pred_prob_fn(batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap) for batch_x_q, batch_x_a, batch_x_q_overlap, batch_x_a_overlap, _ in batch_iterator])
     return preds[:batch_iterator.n_samples]
 
   train_set_iterator = sgd_trainer.MiniBatchIteratorConstantBatchSize(numpy_rng, [q_train, a_train, q_overlap_train, a_overlap_train, y_train], batch_size=batch_size, randomize=True)
@@ -436,7 +499,11 @@ def main():
   while epoch < n_epochs:
       timer = time.time()
       for i, (x_q, x_a, x_q_overlap, x_a_overlap, y) in enumerate(tqdm(train_set_iterator), 1):
-          train_fn(x_q, x_a, x_q_overlap, x_a_overlap, y)
+          if use_qc :
+            x_qc = model.predict(x_q)
+            train_fn(x_q, x_qc, x_a, x_q_overlap, x_a_overlap, y)
+          else :
+            train_fn(x_q, x_a, x_q_overlap, x_a_overlap, y)
 
           # Make sure the null word in the word embeddings always remains zero
           if ZEROUT_DUMMY_WORD:
@@ -455,11 +522,20 @@ def main():
               best_params = [numpy.copy(p.get_value(borrow=True)) for p in params]
               no_best_dev_update = 0
 
+      '''
+      y_pred_dev = predict_prob_batch(dev_set_iterator)
+      dev_acc = metrics.roc_auc_score(y_dev, y_pred_dev) * 100
+      if dev_acc > best_dev_acc:
+        y_pred = predict_prob_batch(test_set_iterator)
+        test_acc = map_score(qids_test, y_test, y_pred) * 100
+        best_dev_acc = dev_acc
+        best_params = [numpy.copy(p.get_value(borrow=True)) for p in params]'''
+      print('epoch: {} batch: {} dev auc: {:.4f}; best test map: {:.4f}; best_dev_acc: {:.4f}'.format(epoch, i, dev_acc, test_acc, best_dev_acc))
       if no_best_dev_update >= 3:
         print "Quitting after of no update of the best score on dev set", no_best_dev_update
         break
 
-      print('epoch {} took {:.4f} seconds'.format(epoch, time.time() - timer))
+      print('epoch {} took {:.4f} seconds; dev auc: {:.4f}; best test map: {:.4f}; best_dev_acc: {:.4f}'.format(epoch, time.time() - timer,dev_acc, test_acc, best_dev_acc))
       epoch += 1
       no_best_dev_update += 1
 
@@ -475,6 +551,8 @@ def main():
 
 
   print "Running trec_eval script..."
+  print "QC model used :", model_name
+  print 'best dev_acc :', best_dev_acc
   N = len(y_pred_test)
 
   df_submission = pd.DataFrame(index=numpy.arange(N), columns=['qid', 'iter', 'docno', 'rank', 'sim', 'run_id'])
