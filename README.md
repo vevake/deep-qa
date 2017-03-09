@@ -37,6 +37,11 @@ in the TRAIN-ALL setting using 53,417 qa pairs:
 
 #Deployment - with Question Classifier
 Download the pre-trained Question Classification models from [here](https://drive.google.com/open?id=0B11zdsTNhzfGcDVXYmkwNXBST28).
+The folder contains the data and the pre-trained question classifier models. It contains four folders namely data, TREC, MS and MT.
+QC_models/data - contains the data used to train question classifier models
+QC_models/TREC - contains pre-trained model trained on TREC data only
+QC_models/MS - contains pre-trained model trained on MS data only
+QC_models/MT - contains pre-trained model trained using multitask learning 
 
 The question classifier contains a different vocabulary and embedding, but since the input is already passed as the vocab_index and not as word in the previous model, we convert the embedding of the classifier to match the vocabulary of the existing system.
 
@@ -55,6 +60,6 @@ example :
 
 trained_data : TRAIN or TRAIN-ALL
 
-trained_model_path : QC_models/TREC/LSTM/
+trained_model_path : the location of the pre-trained model where the embedding is present as well.  
 
 network_the_model_was_trained_on : LSTM or GRU
