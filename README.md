@@ -46,9 +46,12 @@ This wil create appropriate embeddings for each of the previous embddings in the
 
 To train the model with this question classifier models
 
-query : python run_nnet.py <train_data> <trained_model_path> <network_the_model_was_trained_on>
+```sh
+python run_nnet.py <train_data> <trained_model_path> <network_the_model_was_trained_on>
+```
 
-eg: >$ python run_nnet.py TRAIN QC_models/TREC/LSTM/ LSTM
+example :
+>$ python run_nnet.py TRAIN QC_models/TREC/LSTM/ LSTM
 
 trained_data : TRAIN or TRAIN-ALL
 
