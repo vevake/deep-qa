@@ -1,12 +1,13 @@
 import numpy as np
 import cPickle
 import os, json
+import sys
 
 from alphabet import Alphabet
 from utils import load_bin_vec
 
 
-path_all = ['TREC/LSTM/', 'TREC/GRU', 'MT/LSTM', 'MT/GRU']
+path_all = ['TREC/LSTM/', 'TREC/GRU/', 'MT/LSTM/', 'MT/GRU/']
 
 def main():
   for path in path_all :
@@ -18,7 +19,7 @@ def main():
                 ]
     if 'TREC' in path:
       v = json.loads(open('QC_models/vocab/vocab_TREC.json').read())
-    elif 'MS' in path:
+    elif 'MT' in path:
       v = json.loads(open('QC_models/vocab/vocab_MS.json').read())
     else :
       print 'Error loading vocabulary'
