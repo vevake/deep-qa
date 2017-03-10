@@ -48,6 +48,9 @@ def main():
    
   #qc
   if use_qc :
+    '''
+    Since the input is already passed as word index and changing the word embedding to a different size in the pretrained model is not possible. I compiled the model again with the weights loaded from the pre-trained model.    
+    '''
     import numpy as np
     np.random.seed(123)
     from keras.callbacks import Callback

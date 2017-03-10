@@ -35,7 +35,7 @@ in the TRAIN-ALL setting using 53,417 qa pairs:
 
 >$ python run_nnet.py TRAIN-ALL
 
-The parameters of the trained network are dumped under the 'exp.out' folder.
+The parameters of the trained network are dumped under the 'exp.out' folder.  
 TRAIN:
 MAP: 0.7325
 MRR: 0.8018
