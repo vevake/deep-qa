@@ -1,7 +1,7 @@
-#Overview
+# Overview
 This code integrates a question classifier system with the convolutional neural network architecture for learning to match question and answer sentences implemented by Aliaksei Severyn. The original repository of the question answer system can be found <a href = 'https://github.com/aseveryn/deep-qa' target='_blank'> here</a>.
 
-#Requirement
+# Requirement
 
 - python 2.7+
 - numpy
@@ -16,17 +16,17 @@ This code integrates a question classifier system with the convolutional neural 
 
 The above package if not installed, can be installed using pip command for python : `pip install <package-name>`
 
-#Embedding
+#  Embedding
 The pre-trained embeddings used in the QA system can be downloaded <a href = 'https://drive.google.com/folderview?id=0B-yipfgecoSBfkZlY2FFWEpDR3M4Qkw5U055MWJrenE5MTBFVXlpRnd0QjZaMDQxejh1cWs&usp=sharing' target='_blank'> here</a>.
 
-#Build
+# Build
 Download the word-embeddings from above link and place it in the folder named 'embeddings'.
 
 To build the required train/dev/test sets in the suitable format for the network run:
 
 >$ sh run_build_datasets.sh
 
-#Deployment - without Question Classifier
+# Deployment - without Question Classifier
 To train the model in the TRAIN setting run:
 
 >$ python run_nnet.py TRAIN
@@ -44,7 +44,7 @@ TRAIN-ALL:
 MAP: 0.7538
 MRR: 0.8078
 
-#Deployment - with Question Classifier
+# Deployment - with Question Classifier
 Download the pre-trained Question Classification models from <a href = 'https://drive.google.com/open?id=0B11zdsTNhzfGVzd5WXQzUTJ1cDg' target='_blank'> here</a>.
 The folder contains the pre-trained question classifier models. It contains three folders namely vocab, TREC and MT.  
 
