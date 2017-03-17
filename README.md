@@ -1,5 +1,5 @@
 #Overview
-This code integrates a question classifier system with the convolutional neural network architecture for learning to match question and answer sentences implemented by Aliaksei Severyn. The original repository of the question answer system can be found [here](https://github.com/aseveryn/deep-qa){:target="_blank"}.
+This code integrates a question classifier system with the convolutional neural network architecture for learning to match question and answer sentences implemented by Aliaksei Severyn. The original repository of the question answer system can be found <a href = 'https://github.com/aseveryn/deep-qa' target='_blank'> here</a>.
 
 #Requirement
 
@@ -17,7 +17,7 @@ This code integrates a question classifier system with the convolutional neural 
 The above package if not installed, can be installed using pip command for python : `pip install <package-name>`
 
 #Embedding
-The pre-trained embeddings used in the QA system can be downloaded [here](https://drive.google.com/folderview?id=0B-yipfgecoSBfkZlY2FFWEpDR3M4Qkw5U055MWJrenE5MTBFVXlpRnd0QjZaMDQxejh1cWs&usp=sharing){:target="_blank"}
+The pre-trained embeddings used in the QA system can be downloaded <a href = 'https://drive.google.com/folderview?id=0B-yipfgecoSBfkZlY2FFWEpDR3M4Qkw5U055MWJrenE5MTBFVXlpRnd0QjZaMDQxejh1cWs&usp=sharing' target='_blank'> here</a>.
 
 #Build
 Download the word-embeddings from above link and place it in the folder named 'embeddings'.
@@ -45,7 +45,7 @@ MAP: 0.7538
 MRR: 0.8078
 
 #Deployment - with Question Classifier
-Download the pre-trained Question Classification models from [here](https://drive.google.com/open?id=0B11zdsTNhzfGVzd5WXQzUTJ1cDg){:target="_blank"}.
+Download the pre-trained Question Classification models from <a href = 'https://drive.google.com/open?id=0B11zdsTNhzfGVzd5WXQzUTJ1cDg' target='_blank'> here</a>.
 The folder contains the pre-trained question classifier models. It contains three folders namely vocab, TREC and MT.  
 
 QC_models/vocab - contains the vocabulary files used to train the models  
